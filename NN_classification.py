@@ -1,5 +1,5 @@
 import numpy as np
-from minst import load_mnist
+from mnist import load_mnist
 import matplotlib.pyplot as plt
 from scipy.special import expit
 from pylab import *
@@ -97,10 +97,11 @@ def test(NN, is_single):
         else:
             wrong_count += 1
     accuracy = float(correct_count) / float(wrong_count+correct_count)
-    print "Accuracy:",accuracy
+    print "Accuracy:",accuracy*100
 
 layers =[784,100,10]
 learning_parameter = 0.2
+is_random = False
 
 def get_desired_output(j):
     e = np.zeros((10, 1))
@@ -108,9 +109,10 @@ def get_desired_output(j):
     return e
 
 def handle_arguments(argv):
-    optlist, args = getopt.getopt(argv, '', ['layers=', 'learning_parameter='])
+    optlist, args = getopt.getopt(argv, '', ['layers=', 'learning_parameter=','r'])
     global layers
     global learning_parameter
+    global is_random
     for opt in optlist:
         if '--layers' in opt:
             del layers[1]
@@ -118,6 +120,8 @@ def handle_arguments(argv):
             layers[1:1] = layer_sizes
         elif '--learning_parameter' in opt:
             learning_parameter = float(opt[1])
+        elif '--r' in opt:
+            is_random = True
         else:
             usage()
 
@@ -128,5 +132,5 @@ handle_arguments(sys.argv[1:])
 start_time = time.time()
 NN = NeuralNetwork(layers,learning_parameter)
 train(NN)
-test(NN,False)
+test(NN,is_random)
 print("--- Time took: %s seconds ---" % (time.time() - start_time))
